@@ -88,10 +88,9 @@ namespace YoutubeDownloader
                     name = name.Replace(s, "");
                 }
 
-                var streamManifest = await youtube.Videos.Streams.GetManifestAsync(link);
-                var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality();
-                //var stream = await youtube.Videos.Streams.GetAsync(streamInfo);                
-                await youtube.Videos.Streams.DownloadAsync(streamInfo, $"{path}\\{name}.{streamInfo.Container}");
+                var streamManifest = await youtube.Videos.Streams.GetManifestAsync(link); //получаем список доступных видео
+                var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality(); //берем видео наилучшего качества              
+                await youtube.Videos.Streams.DownloadAsync(streamInfo, $"{path}\\{name}.{streamInfo.Container}"); //сохраняем по пути + имя файла из описания
             }
         }
     }
