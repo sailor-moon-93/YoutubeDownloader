@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -30,13 +31,18 @@ namespace YoutubeDownloader
         private void button1_Click(object sender, EventArgs e)
         {
             link = textBox1.Text;
-
+            listBox1.Update();
             if (!String.IsNullOrEmpty(link))
             {
                 ShowInfo(link);
                 label3.Visible = true;
                 button2.Visible = true;
                 button3.Visible = true;
+                button4.Visible = true;
+            }
+            else 
+            {
+                MessageBox.Show("Вы ничего не ввели");
             }
 
             async void ShowInfo(string str)
@@ -92,6 +98,12 @@ namespace YoutubeDownloader
                 var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality(); //берем видео наилучшего качества              
                 await youtube.Videos.Streams.DownloadAsync(streamInfo, $"{path}\\{name}.{streamInfo.Container}"); //сохраняем по пути + имя файла из описания
             }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Жаль");
+            Process.GetCurrentProcess().Kill();
         }
     }
 }

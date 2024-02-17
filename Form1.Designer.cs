@@ -43,7 +43,7 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(263, 34);
+            this.textBox1.Location = new System.Drawing.Point(263, 35);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(136, 20);
             this.textBox1.TabIndex = 0;
@@ -51,11 +51,11 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(39, 34);
+            this.label1.Location = new System.Drawing.Point(39, 38);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(229, 13);
+            this.label1.Size = new System.Drawing.Size(226, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Введите ссылку: (только латинские буквы):";
+            this.label1.Text = "Введите ссылку (только латинские буквы):";
             // 
             // button1
             // 
@@ -80,9 +80,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(39, 66);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(77, 13);
+            this.label2.Size = new System.Drawing.Size(80, 13);
             this.label2.TabIndex = 4;
-            this.label2.Text = "Инфо о видео";
+            this.label2.Text = "Инфо о видео:";
             // 
             // label3
             // 
@@ -114,6 +114,7 @@
             this.button3.Text = "Нет";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Visible = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // textBox2
             // 
@@ -141,6 +142,7 @@
             this.button4.TabIndex = 10;
             this.button4.Text = "Сохранить";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Visible = false;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // Form1
