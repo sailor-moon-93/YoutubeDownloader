@@ -81,11 +81,14 @@ namespace YoutubeDownloader
                 var youtube = new YoutubeClient();
 
                 var video = await youtube.Videos.GetAsync(link);
+                var forbiddenSymbols = new char[] {'\\', '/', ':', '*', '?', '"', '<', '>'};
+                string name = video.Title.Split(forbiddenSymbols).ToString();
+                listBox1.Items.Add(name);
 
                 var streamManifest = await youtube.Videos.Streams.GetManifestAsync(link);
                 var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality();
                 var stream = await youtube.Videos.Streams.GetAsync(streamInfo);                
-                await youtube.Videos.Streams.DownloadAsync(streamInfo, $"{path}\\{streamInfo.Container}");
+                await youtube.Videos.Streams.DownloadAsync(streamInfo, $"{path}\\{name}.{streamInfo.Container}");
             }
         }
     }
