@@ -28,7 +28,6 @@ namespace YoutubeDownloader
     {
         string link;
         string fullSavePath;
-        bool error;
 
         public Form1()
         {
@@ -40,19 +39,18 @@ namespace YoutubeDownloader
         {
             link = textBox1.Text;
             listBox1.Items.Clear();
-            
+            textBox2.Clear();
+            progressBar1.Value = 0;
+            label3.Text = string.Empty;
 
             if (!String.IsNullOrEmpty(link))
             {
-                error = false;
                 ShowInfo(link);
             }
-            else 
+            else
             {
-                MessageBox.Show("Вы ничего не ввели");
+                MessageBox.Show("Вы ничего не ввели!");
             }
-
-
 
             async void ShowInfo(string str)
             {
@@ -70,14 +68,24 @@ namespace YoutubeDownloader
                     listBox1.Items.Add($"Автор: {author}");
                     listBox1.Items.Add($"Продолжительность: {duration}");
 
+                    button2.Visible = true;
+                    button3.Visible = true;
+                    button4.Visible = true;
+                    label3.Visible = true;
                     label4.Visible = true;
                     textBox2.Visible = true;
-                    button4.Visible = true;
+                    progressBar1.Visible = true;
                 }
                 catch (Exception)
                 {
-                    error = true;
-                    MessageBox.Show("Это не ссылка на Youtube или в ней содержатся русские буквы");
+                    MessageBox.Show("Это не ссылка на Youtube видео!");
+                    button2.Visible = false;
+                    button3.Visible = false;
+                    button4.Visible = false;
+                    label3.Visible = false;
+                    label4.Visible = false;
+                    textBox2.Visible = false;
+                    progressBar1.Visible = false;
                 }
             }
         }
@@ -86,10 +94,11 @@ namespace YoutubeDownloader
         {
             var savePath = textBox2.Text;
 
-            if (Directory.Exists(savePath) && error == false)
+
+            if (Directory.Exists(savePath))
             {
                 DownloadVideo(link, savePath);
-                MessageBox.Show("Начал загружать видео");
+                MessageBox.Show("Начал загружать видео!");
             }
             else
             {
@@ -110,46 +119,47 @@ namespace YoutubeDownloader
                     {
                         name = name.Replace(s, "");
                     }
-                    //var progressHandler = new Progress<double>();
+
+
                     var progress = new Progress<double>(p =>
                     {
-                        progressBar1.Value = Convert.ToInt32(p * 100);
-                        progressBar1.Text = Convert.ToString(p * 100) + "%";
-                    });
+                        if (progressBar1.Value != p * 100)
+                        {
+                            progressBar1.Value = Convert.ToInt32(p * 100);
+                            label3.Text = Convert.ToInt32(p * 100) + "%";
+                        }
+                        else
+                        {
+                            MessageBox.Show("Готово!");
+                        }
+                    }); //заполняем прогрессбар
+
 
                     var streamManifest = await youtube.Videos.Streams.GetManifestAsync(link); //получаем список доступных видео
                     var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality(); //берем видео наилучшего качества            
-                    fullSavePath = $"{path}\\{name}.{streamInfo.Container}"; //прокидываем в глобальную переменную полное ия файла
+                    fullSavePath = $"{path}\\{name}.{streamInfo.Container}"; //сохраняем полное имя файла в отдельную переменную
                     await youtube.Videos.Streams.DownloadAsync(streamInfo, fullSavePath, progress); //сохраняем по пути + имя файла из описания
 
-                    
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show("Изначальная ссылка на видео не верна");
-                    error = true;
+                    MessageBox.Show("Изначальная ссылка на видео не верна!");
                 }
             }
         }
-        async void CheckDone()
+
+        private void button2_Click(object sender, EventArgs e)
         {
-            string dir = Path.GetDirectoryName(fullSavePath);
-            string file = Path.GetFileName(fullSavePath);
+            folderBrowserDialog1 = new FolderBrowserDialog();
+            folderBrowserDialog1.ShowDialog();
+            textBox2.Text = folderBrowserDialog1.SelectedPath;
+        }
 
-            Type shellAppType = Type.GetTypeFromProgID("Shell.Application");
-            dynamic shell = Activator.CreateInstance(shellAppType);
-            dynamic folder = shell.NameSpace(dir);
-            dynamic folderItem = folder.ParseName(file);
-            string value = folder.GetDetailsOf(folderItem, 27).ToString();
-
-            for (int i = 0; i < 5; i++)
-            {
-                Thread.Sleep(2000);
-                if (int.Parse(value) > 0)
-                    MessageBox.Show("Скачивание завершено");
-                else
-                    MessageBox.Show("Скачивание завершено с ошибкой!");
-            }
+        private void button3_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Загрузка будет отменена и приложение будет закрыто. Вы уверены?", "Отмена", MessageBoxButtons.YesNo);
+            if (result == DialogResult.Yes)
+                Process.GetCurrentProcess().Kill();
         }
     }
 }
